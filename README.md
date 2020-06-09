@@ -4,6 +4,9 @@
 
 ![image](https://github.com/guozhaolong/apd-example/raw/master/snapshots/2.jpg)
 
+## Online Demo
+https://guozhaolong.github.io/apd-example/
+
 ## Demo
 ```
   const plugins = {
