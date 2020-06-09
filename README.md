@@ -1,5 +1,9 @@
 ## App Designer Renderer By AntDesign
 
+![image](https://github.com/guozhaolong/apd-example/raw/master/snapshots/1.jpg)
+
+![image](https://github.com/guozhaolong/apd-example/raw/master/snapshots/2.jpg)
+
 ## Demo
 ```
   const plugins = {
@@ -114,6 +118,7 @@
 | setValue | 设置主应用当前选择数据值 | values:any |  |
 | changeAppTab | 设置主应用按钮是否可点 | tab:IWidgetData |  |
 | setAppBtnDisabled:$AppBtnId | 设置主应用按钮是否可点 | flag:boolean |  |
+| afterSave | 保存后触发 | {} |  |
 
 #### 回调事件 
 > 以 modelName:eventName:widgetId 形式表示, modelName代表触发该事件的模块名默认为主应用模块,widgetId代表触发该事件的控件ID
@@ -145,6 +150,7 @@
 | getAppButtons | 获取主应用按钮 | 无 | IWidgetData[] |
 | getAppActions | 获取主应用ModelName | 无 | IAppAction[] |
 | [getValidation](#Validation) | 获取字段验证函数 | 无 | (...args: any[])=>Promise 或 undefined |
+| needToSave | 判断离开时是否需要保存 | 无 | boolean |
 
 
 ### Plugins
