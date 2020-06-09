@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "noImplicitAny": false,
+    "target": "es6",
+    "lib": ["dom", "es2017","esnext"],
+    "skipLibCheck": true,
+    "rootDir": "./",
+    "outDir": "lib",
+    "module": "esnext",
+    "declaration": false,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
+  },
+  "exclude": ["node_modules", "lib", "es", "example"]
+}

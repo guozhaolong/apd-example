@@ -1,0 +1,51 @@
+{
+  "name": "apd-example",
+  "version": "0.0.1",
+  "description": "apd example",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "authors": {
+    "name": "guozhaolong",
+    "email": "guozhaolong@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guozhaolong/apd-example.git"
+  },
+  "scripts": {
+    "start": "umi dev",
+    "build": "umi build"
+  },
+  "peerDependencies": {
+    "react": "^16.12.0"
+  },
+  "dependencies": {
+    "antd": "^4.3.1"
+  },
+  "devDependencies": {
+    "@umijs/preset-react": "^1.4.4",
+    "apd": "^1.1.21",
+    "apd-renderer": "^0.1.28",
+    "eventemitter3": "^4.0.0",
+    "father": "^3.0.0-alpha.1",
+    "graphql": "^14.5.8",
+    "graphql-tools": "^4.0.6",
+    "mockjs": "^1.1.0",
+    "umi": "^3.0.10",
+    "umi-request": "^1.2.19",
+    "webpack": "^4.42.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "bugs": {
+    "url": "https://github.com/guozhaolong/apd-example/issues"
+  },
+  "homepage": "https://github.com/guozhaolong/apd-example#readme",
+  "keywords": [
+    "apd",
+    "app designer",
+    "app designer render"
+  ],
+  "license": "MIT"
+}
