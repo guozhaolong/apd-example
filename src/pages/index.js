@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import AppDesigner from 'apd';
-import AppRenderer from 'apd-renderer'
+import { App,AppBean } from 'apd-renderer/dist'
 import { Tabs } from 'antd';
 import 'antd/lib/tabs/style';
 import styles from './index.less';
-import WOBean from '../utils/wobean';
 import demoData from './demoWO';
 import library from './LIBRARY';
 import lookups from './LOOKUPS';
@@ -12,23 +11,37 @@ import menus from './MENUS';
 const { TabPane } = Tabs;
 
 const plugins = {
-  "custom.js": React.lazy(() => import('./custom') )
+  "custom.js": React.lazy(() => import('./custom') ),
+  "tableUploadBtn": React.lazy(() => import('./TableUploadButton') )
+};
+
+const customEvents = (appBean)=>{
+  return {
+    test: () => {
+      console.log(appBean);
+    }
+  }
 };
 
 const AppDemo = () => {
-  const model = useMemo(()=> new WOBean(demoData),[]);
+  const model = new AppBean({
+    events: customEvents
+  });
   model.initLIBRARY(library);
   model.initLOOKUPS(lookups);
   model.initMENUS(menus);
+  useEffect(()=>{
+    model.init(demoData);
+  },[]);
   return (
     <div className={styles.root}>
       <Tabs type="card">
         <TabPane tab="设计器" key="1" style={{padding:16}}>
-          <AppDesigner data={demoData} onChange={(data) => model.updateWidgets(data,true)}/>
+          <AppDesigner data={demoData.app} onChange={(data) => model.init({app:data})}/>
         </TabPane>
         <TabPane tab="预览" key="2">
           <div style={{padding: 16,minHeight: 800}}>
-            <AppRenderer model={model} plugins={plugins}/>
+            <App model={model} plugins={plugins}/>
           </div>
         </TabPane>
       </Tabs>

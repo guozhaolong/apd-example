@@ -1,4 +1,5 @@
 export default [
+
   { type: 'dialog', id: 'bookmark', detail: { label: '我的书签', width: 600, modelName: 'bookmark',}},
   { type: 'table', parentId: 'bookmark', id: 'bookmark_table', detail: { label: '', pageSize:5, addable: false}},
   { type: 'tablecol', parentId: 'bookmark_table', id: 'bookmark_table_col1', detail: { label: '唯一标识',dataAttribute:'keyValue', event:'doQuery',inputMode: 'readonly'}},

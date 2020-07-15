@@ -25,7 +25,7 @@ const Custom = ({model,widget,form}) => {
       <Form.Item name="woNum" label="工单编号">
         <Input />
       </Form.Item>
-      <Form.Item name="owner.personID" label="所有者" >
+      <Form.Item name="owner.personID" label="所有者">
         <Select style={{width:160}} allowClear>
           {
             ownerOptions.map(o => (<Select.Option key={o.id} value={o.personID}>{o.name}</Select.Option>))
