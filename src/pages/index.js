@@ -8,6 +8,7 @@ import demoData from './demoWO';
 import library from './LIBRARY';
 import lookups from './LOOKUPS';
 import menus from './MENUS';
+import query from '../utils/simulator'
 const { TabPane } = Tabs;
 
 const plugins = {
@@ -24,9 +25,7 @@ const customEvents = (appBean)=>{
 };
 
 const AppDemo = () => {
-  const model = new AppBean({
-    events: customEvents
-  });
+  const model = useMemo(()=> new AppBean({events: customEvents, query: query}),[]);
   model.initLIBRARY(library);
   model.initLOOKUPS(lookups);
   model.initMENUS(menus);

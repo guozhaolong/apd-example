@@ -1,6 +1,7 @@
 import { makeExecutableSchema, addMockFunctionsToSchema, MockList } from 'graphql-tools';
 import { graphql, GraphQLScalarType, Kind } from 'graphql';
 import Mock from 'mockjs';
+import _ from "lodash";
 
 const { Random } = Mock;
 
@@ -515,44 +516,26 @@ const schema = makeExecutableSchema({
 
 addMockFunctionsToSchema({ schema, mocks, preserveResolvers: true });
 
-const extend = (_option) => {
-  return (url,{data,method}):any => {
-    if(url === '/api/graphql'){
-      const { query, variables } = data;
-      return graphql(schema, query, null, null, variables);
-    }else if(url === '/api/validate'){
-      const { variables } = data;
-      const woNum = variables['woNum'];
-      if(woNum && woNum.indexOf('WO') !== 0){
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve({status:2,field:'woNum',message:'工单编号必须以WO开头'});
-          }, 300);
-        });
-      }
-      return new Promise((resolve, reject) => {
-        resolve({status:1});
-      });
-    }else if(url === '/api/getAppJSON'){
-      const { app } = data;
-      if(app === 'equipment')
-        return new Promise((resolve, reject) => {
-          resolve();
-        });
-      else if(app === 'workorder')
-        return new Promise((resolve, reject) => {
-          resolve();
-        });
-    }else if(url === '/api/uploadFiles'){
-      return new Promise((resolve, reject) => {
-        resolve({md5:'1234567890abcd',url:'http://xxxxx.com'});
-      });
-    }else {
-      return Promise.resolve();
-    }
-  }
-};
+export default function query(query, variables){
+  return graphql(schema, query, null, null, variables).then(result => {
+    removeHead([result]);
+    return result;
+  });
+}
 
-export {
-  extend,
-};
+function removeHead(data) {
+  data.map(d => {
+    const deep = (node) => _.keys(node).map(s => {
+      if (_.isObject(node[s])) {
+        deep(node[s]);
+        if(node[s]['head']) {
+          node[s]=node[s]['head'];
+        }
+        return node
+      }else{
+        return node
+      }
+    });
+    deep(d)
+  });
+}
