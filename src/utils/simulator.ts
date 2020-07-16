@@ -65,6 +65,7 @@ const typeDefs = `
     desc: String
     amount: Int
     cost: Int
+    fieldFlags:[FieldFlags]
   }
   type LinkTaskList {
     list: [LinkTask]
@@ -101,6 +102,7 @@ const typeDefs = `
     name: String
     email: String
     avatar: String
+    fieldFlags:[FieldFlags]
     assocWO(pagination:Pagination, where:String, sorter: [SortItem]): WorkorderList
   }
   type LocationList {
@@ -114,6 +116,7 @@ const typeDefs = `
     location: String
     name: String
     parent: String
+    fieldFlags:[FieldFlags]
     childrenLoc(pagination:Pagination, where:String, sorter: [SortItem]): LocationList
   }
   type DocLinks {
@@ -123,6 +126,7 @@ const typeDefs = `
     url: String
     created_by: PersonList
     created_time: String
+    fieldFlags:[FieldFlags]
   }
   type DocLinksList {
     list: [DocLinks]
@@ -147,6 +151,7 @@ const typeDefs = `
     owner: PersonList
     status: Int
     item: ItemList
+    fieldFlags:[FieldFlags]
     itemSelect(pagination:Pagination, where:String, sorter: [SortItem]): ItemList
     descSelect(pagination:Pagination, where:String, sorter: [SortItem]): DescList
     assocPerson(pagination:Pagination, where:String, sorter: [SortItem]): PersonList
@@ -163,19 +168,23 @@ const typeDefs = `
     woNum: String
     woNumSelect(pagination:Pagination, where:String, sorter: [SortItem]): WorkorderList
     desc: String
+    fieldFlags:[FieldFlags]
     created_by: PersonList
     created_time: String
     status: Int
     owner: PersonList
     ownerSelect: PersonList
     eq: EquipmentList
-    eqSelect(pagination:Pagination, where:String, sorter: [SortItem]): EquipmentList
     docLinks(pagination:Pagination, where:String, sorter: [SortItem]): DocLinksList
     locationSelect: LocationList
     assocEQ(pagination:Pagination, where:String, sorter: [SortItem]): EquipmentList
     assocItem(pagination:Pagination, where:String, sorter: [SortItem]): ItemList
     assocPerson(pagination:Pagination, where:String, sorter: [SortItem]): PersonList
     linkTask(pagination:Pagination, where:String, sorter: [SortItem]): LinkTaskList
+  }
+  type FieldFlags {
+    flag:Int
+    field:String
   }
   type WorkflowProcessList {
     list: [WorkflowProcess]
@@ -239,10 +248,18 @@ const mocks = {
         woNum: () => 'WO' + Random.integer(100, 999),
         status: ()=> Random.integer(0, 1),
         created_time: ()=> Random.datetime("yyyy-MM-dd HH:mm:ss"),
+        fieldFlags: () => ([{
+          field: () => 'woNum',
+          flag: () => 128
+        }])
       })),
       count: () => 100,
       one: (id) => ({
         woNum: () => 'WO' + Random.integer(100, 999),
+        fieldFlags: () => ([{
+          field: () => 'desc',
+          flag: () => 135
+        }]),
         woNumSelect: () => ({
           list: () => new MockList(5,()=>({
             woNum: () => 'WO' + Random.integer(100, 999),
@@ -252,27 +269,12 @@ const mocks = {
           count: () => 20,
         }),
         eq: () => ({
-          eqNum: () => 'EQ' + Random.integer(100, 999),
-          status: ()=> Random.integer(0, 1),
-          assocPerson: () => ({
-            list: () => new MockList(5,() => ({
-              personID: () => Random.first(),
-              name: ()=> Random.cname(),
-              email: ()=> Random.email(),
-              avatar: ()=> Random.image()
-            })),
-            count: () => 20,
-          }),
-          descSelect: () => ({
-            list: () => new MockList(5,() => ({
-              eqNum: () => 'EQ' + Random.integer(100, 999),
-              desc: () => Random.cword(10),
-            })),
-            count: () => 20,
-          }),
-        }),
-        eqSelect: () => ({
-          list: () => new MockList(5,()=>({
+          list: () => new MockList(5,() => ({
+            eqNum: () => 'EQ' + Random.integer(100, 999),
+            status: ()=> Random.integer(0, 1),
+          })),
+          count: () => 10,
+          head: () => ({
             eqNum: () => 'EQ' + Random.integer(100, 999),
             status: ()=> Random.integer(0, 1),
             assocPerson: () => ({
@@ -280,12 +282,18 @@ const mocks = {
                 personID: () => Random.first(),
                 name: ()=> Random.cname(),
                 email: ()=> Random.email(),
-                avatar: ()=> Random.image()
+                avatar: ()=> Random.image(),
               })),
               count: () => 20,
-            })
-          })),
-          count: () => 20,
+            }),
+            eqNumSelect: () => ({
+              list: () => new MockList(5,() => ({
+                eqNum: () => 'EQ' + Random.integer(100, 999),
+                desc: () => Random.cword(10),
+              })),
+              count: () => 20,
+            }),
+          })
         }),
         status: () => Random.natural(0, 1),
         created_by: () => ({
@@ -326,25 +334,43 @@ const mocks = {
             filename: ()=> Random.word(6)+"."+Random.word(3),
             url: ()=> Random.url('http'),
             created_time: ()=> Random.datetime("yyyy-MM-dd HH:mm:ss"),
+            fieldFlags: () => ([{
+              field: () => 'name',
+              flag: () => 7
+            }]),
           })),
           count: () => 10,
+          one: () => ({
+            fieldFlags: () => ([{
+              field: () => 'name',
+              flag: () => 7
+            }]),
+          })
         }),
         assocEQ: () => ({
           list: () => new MockList(5,()=>({
             eqNum: () => 'EQ' + Random.integer(100, 999),
             status: ()=> Random.integer(0, 1),
+            fieldFlags: () => ([{
+              field: () => 'eqNum',
+              flag: () => 135
+            }]),
             assocPerson: () => ({
               list: () => new MockList(5,() => ({
                 personID: () => Random.first(),
                 name: ()=> Random.cname(),
                 email: ()=> Random.email(),
-                avatar: ()=> Random.image()
+                avatar: ()=> Random.image(),
               })),
               count: () => 20,
             })
           })),
           one:() => ({
             eqNum: () => 'EQ' + Random.integer(100, 999),
+            fieldFlags: () => ([{
+              field: () => 'personID',
+              flag: () => 135
+            }]),
             eqNumSelect: () => ({
               list: () => new MockList(5,()=>({
                 eqNum: () => 'EQ' + Random.integer(100, 999),
@@ -375,7 +401,7 @@ const mocks = {
           count: () => 20,
         }),
         linkTask: () => ({
-          list: () => new MockList(10, () => ({
+          list: () => new MockList( 10, () => ({
             rboSetInfoName: () => 'ITEM' + Random.natural(100, 999),
             appName: () => Random.cword(10),
             own:()=> true,

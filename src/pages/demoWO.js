@@ -25,16 +25,19 @@ export default {
     { type: 'sectioncol', parentId: 'canvas_tabgroup1_tab2_row1', id: 'canvas_tabgroup1_tab2_row1_col2', detail: {}},
     { type: 'sectioncol', parentId: 'canvas_tabgroup1_tab2_row1', id: 'canvas_tabgroup1_tab2_row1_col3', detail: {}},
     { type: 'multiparttextbox', parentId: 'canvas_tabgroup1_tab2_row1_col1', id: 'canvas_tabgroup1_tab2_row1_col1_text1',
-      detail: {label:'工单编号',dataAttribute: 'woNum', descDataAttribute: 'desc', inputMode:'required',descInputMode: 'readonly',lookup: 'selectWO', lookupKeyMap: [['woNum','desc'],['woNum','desc']]}},
+      detail: {label:'工单编号',dataAttribute: 'woNum', descDataAttribute: 'eq.desc', inputMode:'required',descInputMode: 'readonly',lookup: 'selectWO', lookupKeyMap: [['woNum','desc'],['woNum','desc']]}},
     { type: 'multiparttextbox', parentId: 'canvas_tabgroup1_tab2_row1_col1', id: 'canvas_tabgroup1_tab2_row1_col1_text11',
-      detail: {label:'工单编号',dataAttribute: 'woNum', descDataAttribute: 'desc', inputMode:'required', width: 400, widthSpan: 8}},
+      detail: {label:'工单编号',dataAttribute: 'woNum', descDataAttribute: 'desc', inputMode:'required', width: 400, widthSpan: 4}},
     { type: 'combobox', parentId: 'canvas_tabgroup1_tab2_row1_col1', id: 'canvas_tabgroup1_tab2_row1_col1_combobox1',
       detail: {label:'选择用户',dataAttribute: 'owner.personID', inputMode:'required',keyAttribute: 'personID', displayAttribute: 'name', listAttribute: 'ownerSelect'}},
     { type: 'multilinetextbox', parentId: 'canvas_tabgroup1_tab2_row1_col1', id: 'canvas_tabgroup1_tab2_row1_col1_text2',
       detail: {label:'工单描述',dataAttribute: 'desc',rows:4}},
 
     { type: 'textbox', parentId: 'canvas_tabgroup1_tab2_row1_col2', id: 'canvas_tabgroup1_tab2_row1_col2_text1',
-      detail: {label:'主要装备',dataAttribute: 'eq.desc', menuType:'EQ', lookup: 'selectEQ1', lookupKeyMap: [['eq.eqNum','eq.desc'],['eqNum','desc']]}},
+      detail: {label:'主要装备',dataAttribute: 'eq.eqNum', menuType:'EQ', lookup: 'selectEQ1', lookupKeyMap: [['eq.eqNum','eq.desc'],['eqNum','desc']]}},
+
+    { type: 'textbox', parentId: 'canvas_tabgroup1_tab2_row1_col2', id: 'canvas_tabgroup1_tab2_row1_col2_text1_1',
+      detail: {label:'主备',dataAttribute: 'desc'}},
 
     { type: 'textbox', parentId: 'canvas_tabgroup1_tab2_row1_col2', id: 'canvas_tabgroup1_tab2_row1_col2_text2',
       detail: {label:'创建日期',dataAttribute: 'created_time', dataType: 'datetime'}},
