@@ -24,8 +24,9 @@
   },
   "devDependencies": {
     "@umijs/preset-react": "^1.4.4",
-    "apd": "^1.1.38",
-    "apd-renderer": "^0.1.77",
+    "apd": "^1.1.43",
+    "apd-renderer": "^0.1.90",
+    "encoding": "^0.1.13",
     "eventemitter3": "^4.0.0",
     "father": "^3.0.0-alpha.1",
     "graphql": "^14.5.8",
@@ -33,7 +34,8 @@
     "mockjs": "^1.1.0",
     "umi": "^3.0.10",
     "umi-request": "^1.2.19",
-    "webpack": "^4.42.0"
+    "webpack": "^4.42.0",
+    "wfd2": "^0.0.11"
   },
   "files": [
     "dist"

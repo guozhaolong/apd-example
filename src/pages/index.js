@@ -12,8 +12,9 @@ import query from '../utils/simulator'
 const { TabPane } = Tabs;
 
 const plugins = {
-  "custom.js": React.lazy(() => import('./custom') ),
-  "tableUploadBtn": React.lazy(() => import('./TableUploadButton') )
+  "appQuery": React.lazy(() => import('./custom/AppQuery') ),
+  "wfMap": React.lazy(() => import('./custom/WFMap') ),
+  "tableUploadBtn": React.lazy(() => import('./custom/TableUploadButton') )
 };
 
 const customEvents = (appBean)=>{
@@ -25,7 +26,12 @@ const customEvents = (appBean)=>{
 };
 
 const AppDemo = () => {
-  const model = useMemo(()=> new AppBean({events: customEvents, query: query}),[]);
+  const model = new AppBean({
+    events: customEvents,
+    appId: 'workorder',
+    appName: '工单管理',
+    query,
+  });
   model.initLIBRARY(library);
   model.initLOOKUPS(lookups);
   model.initMENUS(menus);

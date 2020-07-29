@@ -41,16 +41,17 @@ export default {
       detail: { label: '邮箱',dataAttribute:'email'}},
   ],
   buttons: [
-    { type: 'appbutton', id: 'equipment_addBtn', detail: { label: '新增',event:'insert',icon:'plus',visible: ['list','insert'] }},
-    { type: 'appbutton', id: 'equipment_prevBtn', detail: { label: '上一条',event:'previous',icon:'left',visible:'insert' }},
-    { type: 'appbutton', id: 'equipment_nextBtn', detail: { label: '下一条',event:'next',icon:'right',visible:'insert' }},
-    { type: 'appbutton', id: 'equipment_saveBtn', detail: { label: '保存',event:'save',icon:'save',visible:'insert' }},
-    { type: 'appbutton', id: 'equipment_routeWFBtn', detail: { label: '发送工作流',event:'routeWF',icon:'partition',visible:'insert' }},
+    { type: 'appbutton', id: 'eq_addBtn', detail: { label: '新增',event:'insert',icon:'plus',visible: ['list','insert'] }},
+    { type: 'appbutton', id: 'eq_prevBtn', detail: { label: '上一条',event:'previous',icon:'left',visible:'insert' }},
+    { type: 'appbutton', id: 'eq_nextBtn', detail: { label: '下一条',event:'next',icon:'right',visible:'insert' }},
+    { type: 'appbutton', id: 'eq_saveBtn', detail: { label: '保存',event:'save',icon:'save',visible:'insert' }},
+    { type: 'appbutton', id: 'eq_routeWFBtn', detail: { label: '发送工作流',event:'routeWF',icon:'partition',visible:'insert' }},
+    { type: 'appbutton', id: 'eq_changeStatus', detail: { label: '变更状态',event:'dialogOpen', eventValue:'status', icon:'securityScan',visible:'insert' }},
   ],
   actions: [
-    {type:'appaction', id: 'action1', detail: {event: 'action1', label: '操作一'}},
-    {type:'appaction', id: 'action2', detail: {event: 'action2', label: '操作二'}},
-    {type:'appaction', id: 'action3', detail: {event: 'action3', label: '操作三'}},
+    {type:'appaction', id: 'eq_action1', detail: {event: 'viewWF', label: '查看流程图'}},
+    {type:'appaction', id: 'eq_action2', detail: {event: 'action2', label: '操作二'}},
+    {type:'appaction', id: 'eq_action3', detail: {event: 'action3', label: '操作三'}},
   ]
 }
 

@@ -1,5 +1,11 @@
 export default [
 
+  { type: 'dialog', id: 'status', detail: { label: '变更状态', width: 400,}},
+  { type: 'combobox', parentId: 'status', id: 'status_combo1',
+    detail: {label:'新状态',dataAttribute: 'status', inputMode:'required',keyAttribute: 'value', displayAttribute: 'description', listAttribute: 'statusSelect', span: 18}},
+  { type: 'pushbutton', parentId: 'status', id: 'bookmark_btn1', detail: { label: '确定',isDefault: true, event: 'changeStatus' }},
+  { type: 'pushbutton', parentId: 'status', id: 'bookmark_btn2', detail: { label: '取消',event: 'dialogClose' }},
+
   { type: 'dialog', id: 'bookmark', detail: { label: '我的书签', width: 600, modelName: 'bookmark',}},
   { type: 'table', parentId: 'bookmark', id: 'bookmark_table', detail: { label: '', pageSize:5, addable: false}},
   { type: 'tablecol', parentId: 'bookmark_table', id: 'bookmark_table_col1', detail: { label: '唯一标识',dataAttribute:'keyValue', event:'doQuery',inputMode: 'readonly'}},
@@ -43,4 +49,46 @@ export default [
   { type: 'tablecol', parentId: 'searchAttr_table', id: 'searchAttr_table_col3', detail: { label: '搜索值',dataAttribute:'specValue'}},
   { type: 'pushbutton', parentId: 'searchAttr', id: 'searchAttr_btn1', detail: { label: '确定',isDefault: true,event: 'dialogOk' }},
   { type: 'pushbutton', parentId: 'searchAttr', id: 'searchAttr_btn2', detail: { label: '取消',event: 'dialogClose' }},
+
+  { type: 'dialog', id: 'completeWF', detail: { label: '完成工作流任务分配', width: 500, }},
+  { type: 'section', parentId: 'completeWF', id: 'completeWF_section1', detail: {}},
+  { type: 'paramvalue', parentId: 'completeWF_section1', id: 'completeWF_section1_text0', detail: {dataAttribute: 'linkTaskList.id'}},
+  { type: 'textbox', parentId: 'completeWF_section1', id: 'completeWF_section1_text1',
+    detail: {label:'任务描述',dataAttribute: 'linkTaskList.description', inputMode: 'readonly'}},
+  { type: 'section', parentId: 'completeWF', id: 'completeWF_section2', detail: {}},
+  { type: 'radiobuttongroup', parentId: 'completeWF_section2', id: 'completeWF_section2_rbg1',
+    detail: {label:'操作',dataAttribute: 'linkTaskList.selectAction', inputMode:'required',keyAttribute: 'id', displayAttribute: 'name', listAttribute: 'linkTaskList.actionList', vertical: true}},
+  { type: 'section', parentId: 'completeWF', id: 'completeWF_section3', detail: {}},
+  { type: 'multilinetextbox', parentId: 'completeWF_section3', id: 'completeWF_section3_text1',
+    detail: {label:'备注',dataAttribute: 'linkTaskList.comment',rows:4 }},
+  { type: 'pushbutton', parentId: 'completeWF', id: 'completeWF_btn1', detail: { label: '确定',isDefault: true,event: 'completeWF' }},
+  { type: 'pushbutton', parentId: 'completeWF', id: 'completeWF_btn2', detail: { label: '取消',event: 'dialogClose' }},
+
+  { type: 'dialog', id: 'assignWF', detail: { label: '查看工作流任务分配', width: 700, }},
+  { type: 'table', parentId: 'assignWF', id: 'assignWF_table', detail: { label: '', objName:'linkTaskList.candidatePersonList', pageSize:5, inputMode:'readonly'}},
+  { type: 'tablecol', parentId: 'assignWF_table', id: 'assignWF_table_col1', detail: { label: '人员',dataAttribute:'personId'}},
+  { type: 'tablecol', parentId: 'assignWF_table', id: 'assignWF_table_col2', detail: { label: '名称',dataAttribute:'personObj.displayName'}},
+  { type: 'tablecol', parentId: 'assignWF_table', id: 'assignWF_table_col3', detail: { label: '任务描述',dataAttribute:'description'}},
+  { type: 'tablecol', parentId: 'assignWF_table', id: 'assignWF_table_col4', detail: { label: '流程名称',dataAttribute:'processDefKey'}},
+  { type: 'pushbutton', parentId: 'assignWF', id: 'assignWF_table_btn1', detail: { label: '确定',isDefault: true,event: 'dialogClose' }},
+  { type: 'pushbutton', parentId: 'assignWF', id: 'assignWF_table_btn2', detail: { label: '查看工作流历史记录',event: 'historyWF', icon: 'history' }},
+  { type: 'pushbutton', parentId: 'assignWF', id: 'assignWF_table_btn3', detail: { label: '查看工作流图',event: 'viewWF', icon: 'picture' }},
+
+  { type: 'dialog', id: 'historyWF', detail: { label: '查看工作流历史记录', width: 700, }},
+  { type: 'table', parentId: 'historyWF', id: 'historyWF_table', detail: { label: '', objName:'historyTaskList', pageSize:5, inputMode:'readonly'}},
+  { type: 'tablecol', parentId: 'historyWF_table', id: 'historyWF_table_col4', detail: { label: '任务描述',dataAttribute:'description'}},
+  { type: 'tablecol', parentId: 'historyWF_table', id: 'historyWF_table_col1', detail: { label: '审批人',dataAttribute:'approvePersonObj.displayName'}},
+  { type: 'tablecol', parentId: 'historyWF_table', id: 'historyWF_table_col2', detail: { label: '审批日期',dataAttribute:'createTime'}},
+  { type: 'tablecol', parentId: 'historyWF_table', id: 'historyWF_table_col3', detail: { label: '审批意见',dataAttribute:'comment'}},
+  { type: 'pushbutton', parentId: 'historyWF', id: 'historyWF_table_btn1', detail: { label: '确定',isDefault: true,event: 'dialogClose' }},
+  { type: 'pushbutton', parentId: 'historyWF', id: 'historyWF_table_btn2', detail: { label: '查看工作流图',event: 'viewWF', icon: 'picture' }},
+  { type: 'pushbutton', parentId: 'historyWF', id: 'historyWF_table_btn3', detail: { label: '查看工作流任务分配',event: 'assignWF', icon: 'team' }},
+
+
+  { type: 'dialog', id: 'viewWF', detail: { label: '查看工作流', width: 700, }},
+  { type: 'section', parentId: 'viewWF', id: 'viewWF_section2', detail: {}},
+  { type: 'custom', parentId: 'viewWF_section2', id: 'viewWF_section2_wfmap', detail: { fileName:'wfMap'} },
+  { type: 'pushbutton', parentId: 'viewWF', id: 'assignWF_table_btn1', detail: { label: '确定',isDefault: true,event: 'dialogClose' }},
+  { type: 'pushbutton', parentId: 'viewWF', id: 'assignWF_table_btn2', detail: { label: '查看工作流历史记录',event: 'historyWF', icon: 'history' }},
+  { type: 'pushbutton', parentId: 'viewWF', id: 'assignWF_table_btn3', detail: { label: '查看工作流任务分配',event: 'assignWF', icon: 'team' }},
 ];

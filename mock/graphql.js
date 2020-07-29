@@ -1,8 +1,8 @@
 import { makeExecutableSchema, addMockFunctionsToSchema, MockList } from 'graphql-tools';
 import { graphql, GraphQLScalarType, Kind } from 'graphql';
 import Mock from 'mockjs';
-import demoEQ from '../pages/demoEQ';
-import demoWO from '../pages/demoWO';
+import demoEQ from '../src/pages/demoEQ';
+import demoWO from '../src/pages/demoWO';
 
 const { Random } = Mock;
 
@@ -23,8 +23,8 @@ const typeDefs = `
     pageSize: Int
   }
   input SortItem{
-    field: String
-    value: SORTVALUE
+    key: String!
+    value: SORTVALUE!
   }
   type BookmarkList {
     list: [Bookmark]
@@ -68,6 +68,20 @@ const typeDefs = `
     cost: Int
     fieldFlags:[FieldFlags]
   }
+  type WorkflowCandidatePersonList {
+    list: [WorkflowCandidatePerson]
+    count: Int
+    one(id:ID): WorkflowCandidatePerson
+    head: WorkflowCandidatePerson
+  }
+  type WorkflowCandidatePerson {
+    id: ID
+    personId: String
+    personObj: PersonList
+    processDefKey: String
+    description: String
+    fieldFlags:[FieldFlags]
+  }
   type LinkTaskList {
     list: [LinkTask]
     count: Int
@@ -76,9 +90,42 @@ const typeDefs = `
   }
   type LinkTask {
     id: ID
-    rboSetInfoName: String,
-    appName: String,
+    rboSetInfoName: String
+    appName: String
+    name: String
+    comment: String
+    selectAction: String
     own: Boolean
+    description: String
+    actionList: ActionList
+    taskDefinitionKey: String
+    fieldFlags:[FieldFlags]
+    candidatePersonList(pagination:Pagination, where:String, sorter: [SortItem]): WorkflowCandidatePersonList
+  }
+  type HistoryTaskList {
+    list: [HistoryTask]
+    count: Int
+    one(id:ID): HistoryTask
+    head: HistoryTask
+  }
+  type HistoryTask {
+    id: ID
+    appName: String
+    description: String
+    comment: String
+    createTime: String
+    fieldFlags:[FieldFlags]
+    approvePersonObj(pagination:Pagination, where:String, sorter: [SortItem]): PersonList
+  }
+  type ActionList {
+    list: [Action]
+    count: Int
+    one(id:ID): Action
+    head: Action
+  }
+  type Action {
+    id: ID
+    name: String
   }
   type DescList {
     list: [Desc]
@@ -100,6 +147,7 @@ const typeDefs = `
   type Person {
     id: ID
     personID: String
+    displayName: String
     name: String
     email: String
     avatar: String
@@ -135,6 +183,17 @@ const typeDefs = `
     one(id:ID): DocLinks
     head: DocLinks
   }
+  type Status {
+    id: ID
+    value: String
+    description: String
+  }
+  type StatusList {
+    list: [Status]
+    count: Int
+    one(id:ID): Status
+    head: Status
+  }
   type EquipmentList {
     list: [Equipment]
     one(id:ID): Equipment
@@ -152,6 +211,7 @@ const typeDefs = `
     owner: PersonList
     status: Int
     item: ItemList
+    isMain: Boolean
     fieldFlags:[FieldFlags]
     itemSelect(pagination:Pagination, where:String, sorter: [SortItem]): ItemList
     descSelect(pagination:Pagination, where:String, sorter: [SortItem]): DescList
@@ -173,6 +233,7 @@ const typeDefs = `
     created_by: PersonList
     created_time: String
     status: Int
+    statusSelect(pagination:Pagination, where:String, sorter: [SortItem]): StatusList
     owner: PersonList
     ownerSelect: PersonList
     eq: EquipmentList
@@ -181,7 +242,8 @@ const typeDefs = `
     assocEQ(pagination:Pagination, where:String, sorter: [SortItem]): EquipmentList
     assocItem(pagination:Pagination, where:String, sorter: [SortItem]): ItemList
     assocPerson(pagination:Pagination, where:String, sorter: [SortItem]): PersonList
-    linkTask(pagination:Pagination, where:String, sorter: [SortItem]): LinkTaskList
+    linkTaskList(pagination:Pagination, where:String, sorter: [SortItem]): LinkTaskList
+    historyTaskList(pagination:Pagination, where:String, sorter: [SortItem]): HistoryTaskList
   }
   type FieldFlags {
     flag:Int
@@ -196,7 +258,9 @@ const typeDefs = `
   type WorkflowProcess {
     id: ID
     name: String
-    appName:String
+    appName: String
+    description: String
+    json: String
   }
   type Query {
     workorderFind(app:String!, pagination:Pagination, where:String, sorter: [SortItem]) : WorkorderList
@@ -207,6 +271,26 @@ const typeDefs = `
     bookmarkFind(app:String!, pagination:Pagination, where:String, sorter: [SortItem]) : BookmarkList
     linkTaskFind(app:String!, pagination:Pagination, where:String, sorter: [SortItem]) : LinkTaskList
     workflowProcessFind(app:String!, pagination:Pagination, where:String, sorter: [SortItem]) : WorkflowProcessList
+  }
+  input workorderInput {
+    id: ID
+    woNum: String
+    created_time: String
+    status: Int
+    dataState: DATASTATE
+  }
+  input workflowTaskInput {
+    id: ID
+    rboId: String
+    selectAction: String
+    comment: String
+    workflowProcessId: String
+    dataState: DATASTATE
+  }
+  type Mutation {
+    workorderSave(app:String!, workorder:[workorderInput!]!, pagination:Pagination, where:String, sorter: [SortItem]): WorkorderList
+    workorderChangeStatus(app:String!, id: ID!, status: String!): Workorder
+    workorderWF(app: String!, workflowTask: [workflowTaskInput!]!): [Workorder!]!
   }
 `;
 
@@ -297,6 +381,10 @@ const mocks = {
           })
         }),
         status: () => Random.natural(0, 1),
+        statusSelect: () => ({
+          list: () => new MockList(5),
+          count: 5,
+        }),
         created_by: () => ({
           personID: () => Random.first(),
           name: ()=> Random.cname(),
@@ -354,7 +442,7 @@ const mocks = {
             status: ()=> Random.integer(0, 1),
             fieldFlags: () => ([{
               field: () => 'eqNum',
-              flag: () => 135
+              flag: () => 0
             }]),
             assocPerson: () => ({
               list: () => new MockList(5,() => ({
@@ -401,8 +489,8 @@ const mocks = {
           })),
           count: () => 20,
         }),
-        linkTask: () => ({
-          list: () => new MockList(pageSize || 10, () => ({
+        linkTaskList: () => ({
+          list: () => new MockList(10, () => ({
             rboSetInfoName: () => 'ITEM' + Random.natural(100, 999),
             appName: () => Random.cword(10),
             own:()=> true,
@@ -411,13 +499,38 @@ const mocks = {
           head: ()=> ({
             rboSetInfoName: () => 'ITEM' + Random.natural(100, 999),
             appName: () => Random.cword(10),
-            own:()=> false,
+            own:()=> true,
+            taskDefinitionKey: () => Random.boolean() ? "taskNode1" : "taskNode4",
+            candidatePersonList: {
+              list: () => new MockList(3, () => ({
+                personId: () => Random.name(),
+                personObj: () => ({
+                  head: ()=> ({
+                    displayName: Random.cname()
+                  })
+                }),
+                processDefKey: () => 'WOFlow',
+              })),
+              count: 3,
+            },
           }),
           one: (id)=>({
             rboSetInfoName: () => 'ITEM' + Random.natural(100, 999),
             appName: () => Random.cword(10),
             own:()=> true,
           }),
+        }),
+        historyTaskList: () => ({
+          list: () => new MockList(5, () => ({
+            rboSetInfoName: () => 'ITEM' + Random.natural(100, 999),
+            approvePersonObj: () => ({
+              head: ()=> ({
+                displayName: Random.cname()
+              })
+            }),
+            createTime: () => Random.datetime("yyyy-MM-dd HH:mm:ss"),
+          })),
+          count: () => 100,
         })
       })
     }),
@@ -525,9 +638,66 @@ const mocks = {
     }),
     workflowProcessFind: (self,{app,pagination:{ pageSize }}) => ({
       list: () => new MockList(pageSize || 10, () => ({
-        name: () => 'wrokflow' + Random.natural(100, 999),
-        appName: () => Random.cword(10)
+        name: () => 'workflow' + Random.natural(100, 999),
+        appName: () => Random.cword(10),
+        json: () => `{
+          "nodes": [
+            { "id": "startNode1", "x": 50, "y": 220, "label": "开始", "type": "start-node" },
+            { "id": "taskNode1", "x": 180, "y": 220, "label": "主管审批", "type": "task-node" },
+            { "id": "gatewayNode1", "x": 320, "y": 220, "label": "紧急会议?", "type": "condition-node" },
+            { "id": "taskNode4", "x": 320, "y": 100, "label": "专家决策", "type": "task-node" },
+            { "id": "catchNode1", "x": 450, "y": 100, "label": "等待结束", "type": "wait-node" },
+            { "id": "taskNode2", "x": 450, "y": 220, "label": "部门领导审批", "type": "task-node" },
+            { "id": "gatewayNode2", "x": 600, "y": 220, "label": "深度>100m", "type": "condition-node" },
+            { "id": "taskNode3", "x": 600, "y": 350, "label": "公司领导审批", "type": "task-node" },
+            { "id": "endNode", "x": 720, "y": 220, "label": "结束", "type": "stop-node" }
+          ],
+          "edges": [
+            { "source": "startNode1", "target": "taskNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode1", "target": "gatewayNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "gatewayNode1", "target": "taskNode2", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "gatewayNode1", "target": "taskNode4", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode4", "target": "catchNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode2", "target": "gatewayNode2", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode2", "target": "taskNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "gatewayNode2", "target": "endNode", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "gatewayNode2", "target": "taskNode3", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode3", "target": "endNode", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode3", "target": "taskNode4", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "catchNode1", "target": "taskNode2", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true }
+          ]
+        }`
       })),
+      head: ()=> ({
+        appName: () => 'workorder',
+        json: () => `{
+          "nodes": [
+            { "id": "startNode1", "x": 50, "y": 220, "label": "开始", "type": "start-node" },
+            { "id": "taskNode1", "x": 180, "y": 220, "label": "主管审批", "type": "task-node" },
+            { "id": "gatewayNode1", "x": 320, "y": 220, "label": "紧急会议?", "type": "condition-node" },
+            { "id": "taskNode4", "x": 320, "y": 100, "label": "专家决策", "type": "task-node" },
+            { "id": "catchNode1", "x": 450, "y": 100, "label": "等待结束", "type": "wait-node" },
+            { "id": "taskNode2", "x": 450, "y": 220, "label": "部门领导审批", "type": "task-node","active":true },
+            { "id": "gatewayNode2", "x": 600, "y": 220, "label": "深度>100m", "type": "condition-node" },
+            { "id": "taskNode3", "x": 600, "y": 350, "label": "公司领导审批", "type": "task-node" },
+            { "id": "endNode", "x": 720, "y": 220, "label": "结束", "type": "stop-node" }
+          ],
+          "edges": [
+            { "source": "startNode1", "target": "taskNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode1", "target": "gatewayNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "gatewayNode1", "target": "taskNode2", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "gatewayNode1", "target": "taskNode4", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode4", "target": "catchNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode2", "target": "gatewayNode2", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode2", "target": "taskNode1", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "gatewayNode2", "target": "endNode", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "gatewayNode2", "target": "taskNode3", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode3", "target": "endNode", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true },
+            { "source": "taskNode3", "target": "taskNode4", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": false },
+            { "source": "catchNode1", "target": "taskNode2", "sourceAnchor": 0, "targetAnchor": 1,"isPositive": true }
+          ]
+        }`
+      }),
       count: () => 100,
     }),
   }),
@@ -545,9 +715,30 @@ addMockFunctionsToSchema({ schema, mocks, preserveResolvers: true });
 
 function graphqlQuery(req, res) {
   const { query, variables } = req.body;
-  graphql(schema, query, null, null, variables).then(result => {
-    return res.json(result);
-  });
+  const { app,where } = variables;
+  if(app && app === 'App'){
+    if(where.indexOf('equipment') > 0){
+      return res.json({
+        items: [{
+          appNum: 'equipment',
+          description: '装备管理',
+          json: JSON.stringify(demoEQ.app),
+        }]
+      });
+    }else if(where.indexOf('workorder') > 0){
+      return res.json({
+        items: [{
+          appNum: 'workorder',
+          description: '工单管理',
+          json: JSON.stringify(demoWO.app),
+        }]
+      });
+    }
+  }else {
+    graphql(schema, query, null, null, variables).then(result => {
+      return res.json(result);
+    });
+  }
 }
 
 function validateFields(req, res){
@@ -564,19 +755,10 @@ function uploadFiles(req, res){
   return res.json({md5:'1234567890abcd',url:'http://xxxxx.com'});
 }
 
-function getAppJSON(req, res){
-  const { app } = req.body;
-  if(app === 'equipment')
-    return res.json(demoEQ);
-  else if(app === 'workorder')
-    return res.json(demoWO);
-}
-
 const proxy = {
   'POST /api/graphql': graphqlQuery,
   'POST /api/validate': validateFields,
   'POST /api/uploadFiles': uploadFiles,
-  'POST /api/getAppJSON': getAppJSON,
 };
 
 export default proxy;

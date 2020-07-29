@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Form,Input,Button,Select } from 'antd';
 
-const Custom = ({model,widget,form}) => {
+const AppQuery = ({model,widget,form}) => {
   const modelName = 'person';
   const widgetId = widget.id;
   const [ownerOptions,setOwnerOptions] = useState([]);
@@ -25,17 +25,17 @@ const Custom = ({model,widget,form}) => {
       <Form.Item name="woNum" label="工单编号">
         <Input />
       </Form.Item>
-      <Form.Item name="owner.personID" label="所有者">
+      <Form.Item name="owner.personID" label="所有者" style={{marginLeft:8}}>
         <Select style={{width:160}} allowClear>
           {
             ownerOptions.map(o => (<Select.Option key={o.id} value={o.personID}>{o.name}</Select.Option>))
           }
         </Select>
       </Form.Item>
-      <Button size="small" style={{lineHeight:'unset',marginRight:8}} onClick={handleReset}>重置</Button>
+      <Button size="small" style={{lineHeight:'unset',marginLeft:8,marginRight:8}} onClick={handleReset}>重置</Button>
       <Button size="small" type="primary" style={{lineHeight:'unset'}} onClick={handleSearch}>查询</Button>
     </div>
   );
 };
 
-export default Custom;
+export default AppQuery;
